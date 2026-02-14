@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronRight, Pencil, Trash2, Plus, Check, X } from "lucide-react";
-import { TreeNode } from "@/types/study";
+import { TreeNode } from "@/contexts/StudyContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,10 @@ interface SubjectTreeProps {
   subjectId: string;
   isAdmin: boolean;
   level?: number;
-  onToggle: (subjectId: string, nodeId: string) => void;
-  onAdd: (subjectId: string, parentId: string | null, name: string) => void;
-  onEdit: (subjectId: string, nodeId: string, name: string) => void;
-  onDelete: (subjectId: string, nodeId: string) => void;
+  onToggle: (nodeId: string) => void;
+  onAdd: (subjectId: string, parentId: string | null, name: string, level: number) => void;
+  onEdit: (nodeId: string, name: string) => void;
+  onDelete: (nodeId: string) => void;
 }
 
 const levelLabels = ["Chapter", "Topic", "Subtopic"];
@@ -54,14 +54,14 @@ function TreeNodeItem({
 
   const handleSaveEdit = () => {
     if (editName.trim()) {
-      onEdit(subjectId, node.id, editName.trim());
+      onEdit(node.id, editName.trim());
     }
     setEditing(false);
   };
 
   const handleAddChild = () => {
     if (newName.trim()) {
-      onAdd(subjectId, node.id, newName.trim());
+      onAdd(subjectId, node.id, newName.trim(), level + 1);
       setNewName("");
       setAdding(false);
       setExpanded(true);
@@ -89,7 +89,7 @@ function TreeNodeItem({
 
         <Checkbox
           checked={node.completed}
-          onCheckedChange={() => onToggle(subjectId, node.id)}
+          onCheckedChange={() => onToggle(node.id)}
           className="data-[state=checked]:bg-success data-[state=checked]:border-success"
         />
 
@@ -132,7 +132,7 @@ function TreeNodeItem({
             <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => { setEditing(true); setEditName(node.name); }}>
               <Pencil className="h-3 w-3 text-muted-foreground" />
             </Button>
-            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onDelete(subjectId, node.id)}>
+            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onDelete(node.id)}>
               <Trash2 className="h-3 w-3 text-destructive" />
             </Button>
             {canAddChild && (

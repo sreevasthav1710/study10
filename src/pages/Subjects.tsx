@@ -43,7 +43,7 @@ export default function Subjects() {
 
   const handleAddChapter = (subjectId: string) => {
     if (newChapterName.trim()) {
-      addNode(subjectId, null, newChapterName.trim());
+      addNode(subjectId, null, newChapterName.trim(), 0);
       setNewChapterName("");
       setAddingChapterTo(null);
       setExpandedSubjects((prev) => new Set(prev).add(subjectId));

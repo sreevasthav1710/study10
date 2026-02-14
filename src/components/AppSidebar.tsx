@@ -21,11 +21,11 @@ const navItems = [
 ];
 
 export function AppSidebar() {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut();
     navigate("/login");
   };
 

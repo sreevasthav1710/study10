@@ -14,6 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
+      assignment_completions: {
+        Row: {
+          assignment_id: string
+          completed: boolean
+          completed_at: string | null
+          id: string
+          student_id: string
+        }
+        Insert: {
+          assignment_id: string
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          student_id: string
+        }
+        Update: {
+          assignment_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignment_completions_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assignments: {
+        Row: {
+          chapter_node_id: string
+          created_at: string
+          created_by: string
+          due_date: string | null
+          id: string
+          link: string
+          title: string
+        }
+        Insert: {
+          chapter_node_id: string
+          created_at?: string
+          created_by: string
+          due_date?: string | null
+          id?: string
+          link: string
+          title: string
+        }
+        Update: {
+          chapter_node_id?: string
+          created_at?: string
+          created_by?: string
+          due_date?: string | null
+          id?: string
+          link?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_chapter_node_id_fkey"
+            columns: ["chapter_node_id"]
+            isOneToOne: false
+            referencedRelation: "study_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doubt_replies: {
+        Row: {
+          created_at: string
+          doubt_id: string
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          doubt_id: string
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          doubt_id?: string
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doubt_replies_doubt_id_fkey"
+            columns: ["doubt_id"]
+            isOneToOne: false
+            referencedRelation: "doubts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doubts: {
+        Row: {
+          chapter_node_id: string
+          created_at: string
+          id: string
+          message: string
+          status: Database["public"]["Enums"]["doubt_status"]
+          student_id: string
+        }
+        Insert: {
+          chapter_node_id: string
+          created_at?: string
+          id?: string
+          message?: string
+          status?: Database["public"]["Enums"]["doubt_status"]
+          student_id: string
+        }
+        Update: {
+          chapter_node_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          status?: Database["public"]["Enums"]["doubt_status"]
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doubts_chapter_node_id_fkey"
+            columns: ["chapter_node_id"]
+            isOneToOne: false
+            referencedRelation: "study_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       node_progress: {
         Row: {
           completed: boolean
@@ -66,6 +203,47 @@ export type Database = {
           username?: string
         }
         Relationships: []
+      }
+      resources: {
+        Row: {
+          chapter_node_id: string
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+          resource_type: string
+          sort_order: number | null
+          url: string
+        }
+        Insert: {
+          chapter_node_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          name: string
+          resource_type: string
+          sort_order?: number | null
+          url: string
+        }
+        Update: {
+          chapter_node_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+          resource_type?: string
+          sort_order?: number | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_chapter_node_id_fkey"
+            columns: ["chapter_node_id"]
+            isOneToOne: false
+            referencedRelation: "study_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       study_nodes: {
         Row: {
@@ -142,6 +320,129 @@ export type Database = {
         }
         Relationships: []
       }
+      test_questions: {
+        Row: {
+          correct_option: string
+          id: string
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          question_text: string
+          sort_order: number | null
+          test_id: string
+        }
+        Insert: {
+          correct_option: string
+          id?: string
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          question_text: string
+          sort_order?: number | null
+          test_id: string
+        }
+        Update: {
+          correct_option?: string
+          id?: string
+          option_a?: string
+          option_b?: string
+          option_c?: string
+          option_d?: string
+          question_text?: string
+          sort_order?: number | null
+          test_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_questions_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_submissions: {
+        Row: {
+          answers: Json
+          id: string
+          score: number | null
+          started_at: string
+          student_id: string
+          submitted_at: string | null
+          test_id: string
+          total: number | null
+        }
+        Insert: {
+          answers?: Json
+          id?: string
+          score?: number | null
+          started_at?: string
+          student_id: string
+          submitted_at?: string | null
+          test_id: string
+          total?: number | null
+        }
+        Update: {
+          answers?: Json
+          id?: string
+          score?: number | null
+          started_at?: string
+          student_id?: string
+          submitted_at?: string | null
+          test_id?: string
+          total?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_submissions_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tests: {
+        Row: {
+          chapter_node_id: string
+          created_at: string
+          created_by: string
+          deadline: string | null
+          id: string
+          timer_minutes: number
+          title: string
+        }
+        Insert: {
+          chapter_node_id: string
+          created_at?: string
+          created_by: string
+          deadline?: string | null
+          id?: string
+          timer_minutes?: number
+          title: string
+        }
+        Update: {
+          chapter_node_id?: string
+          created_at?: string
+          created_by?: string
+          deadline?: string | null
+          id?: string
+          timer_minutes?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tests_chapter_node_id_fkey"
+            columns: ["chapter_node_id"]
+            isOneToOne: false
+            referencedRelation: "study_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -175,6 +476,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "student"
+      doubt_status: "pending" | "replied" | "resolved"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -303,6 +605,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "student"],
+      doubt_status: ["pending", "replied", "resolved"],
     },
   },
 } as const

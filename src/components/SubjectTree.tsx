@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChapterActions } from "@/components/chapter/ChapterActions";
 
 interface SubjectTreeProps {
   nodes: TreeNode[];
@@ -190,6 +191,11 @@ function TreeNodeItem({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Chapter-level actions: Resources, Tests, Assignments, Doubts */}
+      {level === 0 && expanded && (
+        <ChapterActions chapterNodeId={node.id} chapterName={node.name} isAdmin={isAdmin} />
+      )}
     </div>
   );
 }

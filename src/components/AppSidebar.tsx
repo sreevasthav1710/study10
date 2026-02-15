@@ -1,7 +1,9 @@
-import { LayoutDashboard, BookOpen, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { LayoutDashboard, BookOpen, LogOut, MessageCircle } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +16,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -23,6 +26,29 @@ const navItems = [
 export function AppSidebar() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [pendingDoubts, setPendingDoubts] = useState(0);
+  const isAdmin = user?.role === "admin";
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const fetchPending = async () => {
+      const { count } = await supabase
+        .from("doubts")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending");
+      setPendingDoubts(count || 0);
+    };
+    fetchPending();
+
+    const channel = supabase
+      .channel("sidebar-doubts")
+      .on("postgres_changes", { event: "*", schema: "public", table: "doubts" }, () => {
+        fetchPending();
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [isAdmin]);
 
   const handleLogout = async () => {
     await signOut();
@@ -57,6 +83,26 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {isAdmin && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to="/doubts"
+                      end
+                      className="hover:bg-sidebar-accent"
+                      activeClassName="bg-sidebar-accent text-primary font-medium"
+                    >
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      <span className="flex-1">Doubts</span>
+                      {pendingDoubts > 0 && (
+                        <Badge variant="destructive" className="h-5 min-w-5 text-[10px] px-1.5">
+                          {pendingDoubts}
+                        </Badge>
+                      )}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
